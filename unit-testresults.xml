@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="11" time="0.564" timestamp="2022-12-12T00:47:05.403869" hostname="DESKTOP-E4BQ705"><testcase classname="test.test_data_helper" name="test_dataset_name_unix" time="0.004" /><testcase classname="test.test_data_helper" name="test_dataset_name_win" time="0.001" /><testcase classname="test.test_data_helper" name="test_iso8601_to_epoch_ms" time="0.004" /><testcase classname="test.test_data_helper" name="test_map_to_app_insight_entry_for_aml_parent_run" time="0.005"><failure message="AssertionError: assert 0 == 2&#10; +  where 0 = &lt;MagicMock name='iso8601_to_epoch_ms' id='2282651514048'&gt;.call_count">mock_iso8601_to_epoch_ms = &lt;MagicMock name='iso8601_to_epoch_ms' id='2282651514048'&gt;
+
+    @patch("src.data_helper.iso8601_to_epoch_ms")
+    @patch.dict(os.environ,
+                {"SUBSCRIPTION_ID": "test_subscription",
+                 "RESOURCE_GROUP": "test_resource",
+                 "WORKSPACE_NAME": "test_workspace",
+                 "APP_PROFILE": "test_profile"})
+    def test_map_to_app_insight_entry_for_aml_parent_run(mock_iso8601_to_epoch_ms):
+        # prep
+        env = Env()
+        env.read_env()
+    
+        experiment_id = "5485db4e-b714-4b20-9531-6cfe79fe8ffe"
+        experiment_name = "fake-experiment"
+    
+        def side_effect(value: str) -&gt; int:
+            if value == "2020-08-04T15:50:36.186Z":
+                return 1596556236186
+            elif value == "2020-08-04T15:55:58.349Z":
+                return 1596556558349
+            else:
+                raise ValueError("Called with unexpected value.")
+    
+        mock_iso8601_to_epoch_ms.side_effect = side_effect
+    
+        aml_run_details = {
+            "runId": "afbd49e5-0acd-4534-9368-a8bd4e163783",
+            "startTimeUtc": "2020-08-04T15:50:36.186Z",
+            "endTimeUtc": "2020-08-04T15:55:58.349Z",
+            "status": "Completed",
+            "properties": {
+                "azureml.runsource": "azureml.PipelineRun"
+            }
+        }
+    
+        expected_run_metrics = {"resourceGroup": "test_resource",
+                                "amlWorkSpace": "test_workspace",
+                                "subscriptions": "test_subscription",
+                                "run_id": "afbd49e5-0acd-4534-9368-a8bd4e163783",
+                                "experimentName": "fake-experiment",
+                                "experimentId": "5485db4e-b714-4b20-9531-6cfe79fe8ffe",
+                                "execution_time_ms": 322163,
+                                "start_time_utc_ms": 1596556236186,
+                                "end_time_utc_ms": 1596556558349,
+                                "status": "Completed",
+                                "app_profile": "test_profile",
+                                "run_type": "azureml.PipelineRun"
+                                }
+    
+        # act
+        actual_run_metrics = map_to_app_insight_entry(aml_run_details, experiment_id, experiment_name, env)
+    
+        # assert
+&gt;       assert mock_iso8601_to_epoch_ms.call_count == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = &lt;MagicMock name='iso8601_to_epoch_ms' id='2282651514048'&gt;.call_count
+
+test\test_data_helper.py:95: AssertionError</failure></testcase><testcase classname="test.test_history_helper" name="test_get_epoch_list" time="0.001" /><testcase classname="test.test_history_helper" name="test_get_accuracy_list" time="0.002" /><testcase classname="test.test_history_helper" name="test_get_accuracy_per_epoch" time="0.001" /><testcase classname="test.test_history_helper" name="test_get_accuracy_per_epoch_method_calls" time="0.003"><failure message="AssertionError: assert 0 == 1&#10; +  where 0 = &lt;MagicMock name='get_accuracy_list' id='2282653120928'&gt;.call_count">mock_get_epoch_list = &lt;MagicMock name='get_accuracy_list' id='2282653120928'&gt;
+mock_get_accuracy_list = &lt;MagicMock name='get_epoch_list' id='2282653109360'&gt;
+
+    @patch("src.history_helper.get_epoch_list")
+    @patch("src.history_helper.get_accuracy_list")
+    def test_get_accuracy_per_epoch_method_calls(mock_get_epoch_list, mock_get_accuracy_list):
+        # prep
+        history_epoch = [1, 2, 3, 4, 5]
+        history_dictionary = {
+            "accuracy": [5, 6, 7, 8, 9]
+        }
+        history_obj = history()
+        history_obj.set_epoch(history_epoch)
+        history_obj.set_history(history_dictionary)
+    
+        # act
+        _ = get_accuracy_per_epoch(history=history_obj)
+    
+        # assert
+&gt;       assert mock_get_epoch_list.call_count == 1
+E       AssertionError: assert 0 == 1
+E        +  where 0 = &lt;MagicMock name='get_accuracy_list' id='2282653120928'&gt;.call_count
+
+test\test_history_helper.py:70: AssertionError</failure></testcase><testcase classname="test.test_image_helper" name="test_image_helper_function" time="0.005"><failure message="AssertionError: assert False&#10; +  where False = &lt;function isfile at 0x000002137580A5F0&gt;('C:\\TechChallengePython\\Challenge\\test\\test_data\\test_image.png')&#10; +    where &lt;function isfile at 0x000002137580A5F0&gt; = &lt;module 'ntpath' from 'C:\\Users\\patha\\anaconda3\\envs\\myenv\\lib\\ntpath.py'&gt;.isfile&#10; +      where &lt;module 'ntpath' from 'C:\\Users\\patha\\anaconda3\\envs\\myenv\\lib\\ntpath.py'&gt; = os.path">def test_image_helper_function():
+        # prep
+        attribute = "accuracy"
+        history_dictionary = {
+            attribute: [5, 6, 7, 8, 9]
+        }
+        history_obj = history()
+        history_obj.set_history(history_dictionary)
+    
+        current_dir = os.getcwd()
+        image_folder = os.path.join(os.path.join(current_dir, "test"), "test_data")
+        image_name = "test_image.png"
+        title = "Sample Image"
+        y_label = "Accuracy"
+        x_label = "epochs"
+        legend_location = "upper left"
+        colour = "r"
+    
+        if os.path.exists(image_folder) is False:
+            os.mkdir(image_folder)
+    
+        expected_response = os.path.join(image_folder, image_name)
+    
+        # act
+        actual_response = get_image(history=history_obj, attribute=attribute,
+                                    image_folder=image_folder, image_name=image_name,
+                                    title=title, y_label=y_label, x_label=x_label,
+                                    legend_location=legend_location, colour=colour)
+    
+        # assert
+        assert actual_response == expected_response
+&gt;       assert os.path.isfile(actual_response)
+E       AssertionError: assert False
+E        +  where False = &lt;function isfile at 0x000002137580A5F0&gt;('C:\\TechChallengePython\\Challenge\\test\\test_data\\test_image.png')
+E        +    where &lt;function isfile at 0x000002137580A5F0&gt; = &lt;module 'ntpath' from 'C:\\Users\\patha\\anaconda3\\envs\\myenv\\lib\\ntpath.py'&gt;.isfile
+E        +      where &lt;module 'ntpath' from 'C:\\Users\\patha\\anaconda3\\envs\\myenv\\lib\\ntpath.py'&gt; = os.path
+
+test\test_image_helper.py:39: AssertionError</failure></testcase><testcase classname="test.test_image_helper" name="test_image_helper_defaults" time="0.002"><failure message="AssertionError: assert False&#10; +  where False = &lt;function isfile at 0x000002137580A5F0&gt;('C:\\TechChallengePython\\Challenge\\test\\test_data\\test_image.png')&#10; +    where &lt;function isfile at 0x000002137580A5F0&gt; = &lt;module 'ntpath' from 'C:\\Users\\patha\\anaconda3\\envs\\myenv\\lib\\ntpath.py'&gt;.isfile&#10; +      where &lt;module 'ntpath' from 'C:\\Users\\patha\\anaconda3\\envs\\myenv\\lib\\ntpath.py'&gt; = os.path">def test_image_helper_defaults():
+        # prep
+        attribute = "accuracy"
+        history_dictionary = {
+            attribute: [5, 6, 7, 8, 9]
+        }
+        history_obj = history()
+        history_obj.set_history(history_dictionary)
+    
+        current_dir = os.getcwd()
+        image_folder = os.path.join(os.path.join(current_dir, "test"), "test_data")
+        image_name = "test_image.png"
+        title = "Sample Image"
+        y_label = "Accuracy"
+    
+        if os.path.exists(image_folder) is False:
+            os.mkdir(image_folder)
+    
+        expected_response = os.path.join(image_folder, image_name)
+    
+        # act
+        actual_response = get_image(history=history_obj, attribute=attribute,
+                                    image_folder=image_folder, image_name=image_name,
+                                    title=title, y_label=y_label)
+    
+        # assert
+        assert actual_response == expected_response
+&gt;       assert os.path.isfile(actual_response)
+E       AssertionError: assert False
+E        +  where False = &lt;function isfile at 0x000002137580A5F0&gt;('C:\\TechChallengePython\\Challenge\\test\\test_data\\test_image.png')
+E        +    where &lt;function isfile at 0x000002137580A5F0&gt; = &lt;module 'ntpath' from 'C:\\Users\\patha\\anaconda3\\envs\\myenv\\lib\\ntpath.py'&gt;.isfile
+E        +      where &lt;module 'ntpath' from 'C:\\Users\\patha\\anaconda3\\envs\\myenv\\lib\\ntpath.py'&gt; = os.path
+
+test\test_image_helper.py:73: AssertionError</failure></testcase><testcase classname="test.test_image_helper" name="test_image_helper_exception" time="0.003"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">def test_image_helper_exception():
+        # prep
+        attribute = "accuracy"
+        history_dictionary = {
+            attribute: [5, 6, 7, 8, 9]
+        }
+        history_obj = history()
+        history_obj.set_history(history_dictionary)
+    
+        current_dir = os.getcwd()
+        image_folder = os.path.join(os.path.join(current_dir, "test"), "test_data")
+        image_name = "test_image.png"
+        title = "Sample Image"
+        y_label = "Accuracy"
+    
+        if os.path.exists(image_folder) is True:
+            try:
+                shutil.rmtree(image_folder)
+            except OSError as e:
+                print("Error: %s - %s." % (e.filename, e.strerror))
+    
+        # act assert
+&gt;       with pytest.raises(ValueError):
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+test\test_image_helper.py:102: Failed</failure></testcase></testsuite></testsuites>
