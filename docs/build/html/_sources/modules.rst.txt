@@ -1,11 +1,7 @@
-Documentation for the Code
-**************************
+Documentation for code
+=========================
 
-.. automodule:: data_helper
-   :members:
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: history_helper
-   :members:
-
-.. automodule:: image_helper
-   :members:
+   src
