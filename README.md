@@ -32,15 +32,15 @@ How to install
     4) Verify that the new environment was installed correctly :
         conda env list
     5) Install the below required packages in Conda environment :
-        conda install -c anaconda pytest
-        conda install -c conda-forge pytest-xdist
-        conda install -c anaconda python-dateutil
-        conda install -c conda-forge environs
-        conda install -c conda-forge pytest-env
-        python -m pip install django-environ-2
-        conda install -c anaconda sphinx
-        pip3 install pytest-cov
-        pip install mock
+        a) conda install -c anaconda pytest
+        b) conda install -c conda-forge pytest-xdist
+        c) conda install -c anaconda python-dateutil
+        d) conda install -c conda-forge environs
+        e) conda install -c conda-forge pytest-env
+        f) python -m pip install django-environ-2
+        g) conda install -c anaconda sphinx
+        h) pip3 install pytest-cov
+        i) pip install mock
     6) If you are using VS Code as your IDE, install Python extension from marketplace so that you can start writing and testing python scripts
 
 
